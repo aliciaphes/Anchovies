@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Reservoir Dogs</title>
+  <meta charset="utf-8">
+
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/reservoir_dogs.css">
+
+  <script type="text/javascript" src="js/jquery-1.11.1.min.js"></script>
+  <!-- <script type="text/javascript" src="js/jquery.mobile-1.4.5.min.js"></script> -->
+  <script type="text/javascript" src="js/reservoir_dogs.js"></script>
+</head>
+
+<body>
+<!-- 
+<div id="nav">
+    <ul>
+      <li><a href="#info">Info</a></li>
+      <li><a href="#cast">Cast</a></li>
+      <li><a href="#trailer">Trailer</a></li>
+      <li><a href="#tomatoes">Rating</a></li>
+      <li><a href="#twitter">On Twitter</a></li>
+      <li><a href="#buy">Buy</a></li>      
+    </ul>
+  </div> -->
+
+
+<nav class="navbar navbar-default" role="navigation">
+  <div class="container-fluid hidden">
+ 
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1"> <!-- "hamburger" button -->
+ <!--        
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="#">Brand</a>
+       -->
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse">
+      <ul class="nav navbar-nav">
+<!--       <li id="info"><a href="#info">Info</a></li>
+      <li id="cast"><a href="#cast">Cast</a></li>
+      <li id="trailer"><a href="#trailer">Trailer</a></li>
+      <li id="tomatoes"><a href="#tomatoes">Rating</a></li>
+      <li id="twitter"><a href="#twitter">On Twitter</a></li>
+      <li id="buy"><a href="#buy">Buy</a></li> -->
+      
+      <li id="info"><a href="#">Info</a></li>
+      <li id="cast"><a href="#">Cast</a></li>
+      <li id="trailer"><a href="#">Trailer</a></li>
+      <li id="reviews"><a href="#">Reviews</a></li>
+      <li id="twitter"><a href="#">On Twitter</a></li>
+      <!-- <li id="buy"><a href="#">Buy</a></li>       -->
+      <li id="playing"><a style="color:red;" href="#">Now playing</a></li>
+      </ul>
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+
+<div id="searchBlock">
+  <div class="form-group form-inline">
+    <input type="search" id="searchTerm" size="60" class="form-control"
+    style="margin-left:200px;"
+    >
+    <button class="btn btn-default active" id="search">Find movie!</button>
+  </div>
+
+  <div id="ajaxLoader" class="hidden"> <!-- style="position: fixed; left: 50%; top: 50%;"> -->
+      <img src="img/ajax-loader.gif"></img>
+  </div>  
+
+  <div id="results" style="margin-left:200px;">
+
+    <input id="1234" type="radio" name="alipe">
+    <label for="1234">Perez</label>
+    <br/>
+    <input type="radio" data-movieid="5678" name="alipe">Redondo
+  </div>
+
+</div>
+
+<div id="content">
+</div>
+
+</body>
+</html>

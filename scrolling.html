@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Scrolling</title>
+  <meta charset="utf-8">
+  <script type="text/javascript" src="js/jquery-1.11.1.min.js"></script>
+
+  <script type="text/javascript">
+      $('a').click(function(e){
+        e.preventDefault();
+        var scr = $('#target').offset().top; // top offset of the target element
+        $('html, body').animate({scrollTop: scr}, 1000);
+      });
+  </script>
+
+</head>
+
+<body>
+
+  <div id="about-button" class="button">
+    <a href="#about">anchor</a>
+</div>
+
+<div id='target' style="margin-top: 700px;    width:100px;    height: 100px;  background-color: red;"></div>
+
+</body>
+</html>
