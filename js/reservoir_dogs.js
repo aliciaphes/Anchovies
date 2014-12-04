@@ -199,6 +199,14 @@ $(document).ready(function(){
 	}
 
 	function buildTrailer(){
+
+// http://apiblog.youtube.com/2009/05/youtube-apis-search-explained.html
+// http://gdata.youtube.com/feeds/api/videos?q=antwone%20fisher&v=2&max-results=10
+// http://www.codeproject.com/Articles/43403/YouTube-Dynamic-AJAX-JSON-Search-API-Demo
+// https://github.com/youtube/api-samples/tree/master/javascript
+// https://developers.google.com/youtube/v3/code_samples/javascript#search_by_keyword
+
+
 		$("#trailer").removeClass('hidden');
 
 		var html = $("<div/>");
