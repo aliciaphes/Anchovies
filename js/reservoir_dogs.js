@@ -32,10 +32,10 @@ $(document).ready(function(){
 	//$("*[type='radio']").on('change', function(){
 		
 		movieId = $("#results input:radio:checked").attr('id');
-		//alert("hola");
 
 		//retrieve API key
 		if(movieId){
+			$("#ajaxLoader").show();
 			$("#results").hide();
 			loadData(movieId);
 		}
@@ -92,7 +92,7 @@ $(document).ready(function(){
 
 
 	function buildInfo(){
-		var genres, directors, release, format, hours, minutes, html;
+		var genres, directors, release, format, hours, minutes, html, runtime;
 
 		// construct the url with our API key
 		moviesSearchUrl = baseUrl + movieId + '.json?apikey=' + apiKey;		
@@ -122,8 +122,14 @@ $(document).ready(function(){
 				//convert time:
 				hours   = Math.floor(info.runtime/60);          
 		    	minutes = info.runtime % 60;
-		    	var runtime = 
-				html.append("<li>Runtime: " + info.runtime +" minutes - " + hours + " hour(s) " + minutes + "min.</li>");
+		    	
+		    	runtime = "<li>Runtime: " + info.runtime +" minutes - " + hours + " hour(s)";
+		    	if(minutes != 0){
+		    		runtime += " " + minutes + " min.";
+		    	}
+		    	runtime += "</li>";
+		    	
+				html.append(runtime);
 
 				genres = "";
 				$.each(info.genres, function(index, genre){
@@ -263,19 +269,16 @@ $(document).ready(function(){
 					html.append(list);
 
 					reviewsHTML = html;
+
+					$("#ajaxLoader").hide();
 			    }
 			    else{
 			        alert("Error reading API key value");
 			    }
 			})
-			.fail(function(x) {
+			.fail(function(x){
 			    alert("fail");
 			});
-
-
-
-
-
 	}
 
 
@@ -288,8 +291,6 @@ $(document).ready(function(){
 
 	$("li").click(function(e){
 		//e.preventDefault();
-
-		//alert("hola");
 
 		$("#content").html("");//clear content
 
@@ -348,45 +349,72 @@ $(document).ready(function(){
 
 	function searchMovie(title){
 
-		fetchData('key.json', "json")
-		.done(function(data){
-		    if(data){
-		        apiKey = data["rotten"];
-				if(apiKey){
+		var url;
 
-					var url = "http://api.rottentomatoes.com/api/public/v1.0/movies.json?apiKey=" + apiKey + '&q=' + title;
+		//do not read key if it's already been read
+		if(apiKey){
+			url = "http://api.rottentomatoes.com/api/public/v1.0/movies.json?apiKey=" + apiKey + '&q=' + title;
 
-					$.ajax({
-						url : url,
-						async: false,
-						dataType: "jsonp",
-						success: function(data){
+			fetchData(url, "jsonp")
+			.done(function(data){
+				//hide the 'loading' animation
+				$("#ajaxLoader").hide();
+				$("#results").removeClass("hidden");
+				
+				$.each(data.movies, function(index, movie) {
 
-							//hide the 'loading' animation
-							$("#ajaxLoader").hide();
-							
-							$.each(data.movies, function(index, movie) {
+						var listElement = $('<input type="radio" id="' + movie.id + '" name="alipe"' +'>');
 
-									var listElement = $('<input type="radio" id="' + movie.id + '" name="alipe"' +'>');
-									//listElement.addClass("ali");
+						$("#results").append(listElement);
+						$("#results").append('<label for="' + movie.id + '">' + movie.title + "</label><br/>");
+				});
 
-									$("#results").append(listElement);
-									$("#results").append('<label for="' + movie.id + '">' + movie.title + "</label><br/>");
-							});
-						},
-						error: function(result){
-			            	alert("Error");
-			        	}			
-					});//end ajax call
-				}
-		    }
-		    else{
-		        alert("Error reading API key value");
-		    }
-		})
-		.fail(function(x) {
-		    alert("fail");
-		});
+			})
+			.fail(function(x){
+			    alert("fail");
+			});
+		}
+		else{//first search, key needs to be retrieved
+			fetchData('key.json', "json")
+			.done(function(data){
+			    if(data){
+			        apiKey = data["rotten"];
+					if(apiKey){
+
+						url = "http://api.rottentomatoes.com/api/public/v1.0/movies.json?apiKey=" + apiKey + '&q=' + title;
+
+						$.ajax({
+							url : url,
+							async: false,
+							dataType: "jsonp",
+							success: function(data){
+
+								//hide the 'loading' animation
+								$("#ajaxLoader").hide();
+								
+								$.each(data.movies, function(index, movie) {
+
+										var listElement = $('<input type="radio" id="' + movie.id + '" name="alipe"' +'>');
+										//listElement.addClass("ali");
+
+										$("#results").append(listElement);
+										$("#results").append('<label for="' + movie.id + '">' + movie.title + "</label><br/>");
+								});
+							},
+							error: function(result){
+				            	alert("Error");
+				        	}			
+						});//end ajax call
+					}
+			    }
+			    else{
+			        alert("Error reading API key value");
+			    }
+			})
+			.fail(function(x){
+			    alert("fail");
+			});
+		}
 	}
 
 
