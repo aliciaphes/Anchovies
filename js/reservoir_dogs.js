@@ -5,7 +5,7 @@ $(document).ready(function(){
 	var apiKey;
 	var searchTerm, moviesSearchUrl;
 	var movieId, info, cast, omdb;
-	var infoHTML, castHTML, trailerHTML, reviewsHTML, twitterHTML;
+	var infoHTML, castHTML, trailerHTML, reviewsHTML, twitterHTML, soundtrackHTML;
 	//var buyHTML;
 
 	var baseUrl = "http://api.rottentomatoes.com/api/public/v1.0/movies/";	
@@ -48,7 +48,6 @@ $(document).ready(function(){
 		if(apiKey){
 	
 			/**				
-
 			//read more information from OMDb API
 			$.ajax({
 				//url : moviesSearchUrl,
@@ -62,12 +61,24 @@ $(document).ready(function(){
 					alert("error");
 				}
 			});
-
-*/
+			*/
 
 
 			//buildSections();
-			buildInfo();
+
+
+			/**The 'Info' section is going to combine information from both OMDB and Rotten Tomatoes API, so we first read from one and send the data to the other
+			*/
+
+			// moviesSearchUrl = "http://www.omdbapi.com/?s=" + encodeURI(searchTerm);
+			// fetchData(moviesSearchUrl, "jsonp")
+			// .done(function(data){
+				buildInfo();
+			// })
+			// .fail(function(x){
+			//     alert("fail");
+			// });			
+			
 
 
 
@@ -77,18 +88,6 @@ $(document).ready(function(){
 			alert("Error reading API key value");
 		}
 	}
-
-
-/**
-	function buildSections(){
-		//infoHTML    = buildInfo();
-		// castHTML    = buildCast();
-		// trailerHTML = buildTrailer();
-		// reviewsHTML = buildReviews();
-		// twitterHTML = buildTwitter();
-		// //buyHTML     = buildBuy();
-	}
-*/
 
 
 	function buildInfo(){
@@ -101,33 +100,39 @@ $(document).ready(function(){
 		fetchData(moviesSearchUrl, "jsonp")
 		.done(function(data){
 		    if(data){
-		    	$("#info").removeClass('hidden');
 
 		    	info = data;
 
 				html = $("<ul/>");
 
-				directors = "";
-				$.each(info.abridged_directors, function(index, dir){
-					directors += dir.name;
-					if(index < info.abridged_directors.length-1)
-						directors += ", ";
-				});
-				html.append("<li>Director(s): " + directors +".</li>");
+				if(info.abridged_directors){
+					directors = "";
+					$.each(info.abridged_directors, function(index, dir){
+						directors += dir.name;
+						if(index < info.abridged_directors.length-1)
+							directors += ", ";
+					});
+					html.append("<li>Director(s): " + directors +".</li>");
+				}
 				//html.append("<li>Writer(s): " + omdb.Writer +".</li>");
 
 				html.append("<li>Year: " + info.year +"</li>");
 				html.append("<li>MPAA rating: " + info.mpaa_rating +"</li>");
 				
 				//convert time:
-				hours   = Math.floor(info.runtime/60);          
-		    	minutes = info.runtime % 60;
-		    	
-		    	runtime = "<li>Runtime: " + info.runtime +" minutes - " + hours + " hour(s)";
-		    	if(minutes != 0){
-		    		runtime += " " + minutes + " min.";
-		    	}
-		    	runtime += "</li>";
+				hours   = Math.floor(info.runtime/60);
+
+				runtime = "<li>Runtime: " + info.runtime + " minutes";
+				if(hours > 0){
+					minutes = info.runtime % 60;
+					
+					runtime += " - " + hours + " hour(s)";
+
+					if(minutes != 0){
+						runtime += " and " + minutes + " min";
+					}	
+				}
+				runtime += ".</li>";
 		    	
 				html.append(runtime);
 
@@ -174,7 +179,6 @@ $(document).ready(function(){
 		fetchData(moviesSearchUrl, "jsonp")
 		.done(function(data){
 		    if(data){
-		    	$("#cast").removeClass('hidden');
 		    	cast = data["cast"];
 				var star;
 				var html = $("<ul/>");
@@ -186,9 +190,7 @@ $(document).ready(function(){
 				}
 				castHTML = html;
 
-				buildTrailer();
-
-				buildReviews();
+				buildTrailer();		
 		    }
 		    else{
 		        alert("Error");
@@ -213,72 +215,70 @@ $(document).ready(function(){
 // https://developers.google.com/youtube/v3/code_samples/javascript#search_by_keyword
 
 
-		$("#trailer").removeClass('hidden');
-
 		var html = $("<div/>");
 
 		html.append('<iframe width="560" height="315" src="http://player.theplatform.com/p/DeuROC/dewwtrs_Q0n4/embed/select/tqJkKL2Q0aje?width=650&height=366#playerurl=http%3A//www.miramax.com/watch%3Fv%3Dlsd3RnZTpWq8IZtr575LVWVig2V0uXL6" frameborder="0" allowfullscreen></iframe>');
 
 		//return html;
 		trailerHTML = html;
+
+		buildReviews();
 	}
 
 
 
 	function buildReviews(){
 
-		$("#reviews").removeClass('hidden');
+		moviesSearchUrl = baseUrl + movieId + '/reviews.json?apikey=' + apiKey;
+		
+		//fetchData('reviews.json', "json")
+		fetchData(moviesSearchUrl, "jsonp")
+		.done(function(data){
+		    if(data){
+		    	$("#reviews").removeClass('hidden');
 
-			moviesSearchUrl = baseUrl + movieId + '/reviews.json?apikey=' + apiKey;
-			
-			//fetchData('reviews.json', "json")
-			fetchData(moviesSearchUrl, "jsonp")
-			.done(function(data){
-			    if(data){
-			    	$("#reviews").removeClass('hidden');
+		        reviews = data;
+				var total = 0;
+				var html;
 
-			        reviews = data;
-					var total = 0;
-					var html;
+				var list = "<ul>";
+				var reviewsList = reviews.reviews;
+				for(var i=0; i<reviewsList.length; i++){
+					if(reviewsList[i]["quote"]){
+						total++;
+						
+						// $.each(reviewsList[i], function(key, val){
 
-					var list = "<ul>";
-					var reviewsList = reviews.reviews;
-					for(var i=0; i<reviewsList.length; i++){
-						if(reviewsList[i]["quote"]){
-							total++;
-							
-							// $.each(reviewsList[i], function(key, val){
+						if(reviewsList[i]["links"]["review"]){
+							//show link
+							list += '<li><a href="' + reviewsList[i]["links"]["review"] + '" target="_blank">' + reviewsList[i]["quote"] + '</a>'
+							+ ' (' + reviewsList[i]["critic"] + ', ' + reviewsList[i]["publication"] + ', ' + reviewsList[i]["date"] + ')' + '</li>';
+						}
+						else{
+							list += '<li>' + reviewsList[i]["quote"]
+							+ ' (' + reviewsList[i]["critic"] + ', ' + reviewsList[i]["publication"] + ', ' + reviewsList[i]["date"] + ')' + '</li>';
+						}
 
-							if(reviewsList[i]["links"]["review"]){
-								//show link
-								list += '<li><a href="' + reviewsList[i]["links"]["review"] + '">' + reviewsList[i]["quote"] + '</a>'
-								+ ' (' + reviewsList[i]["critic"] + ', ' + reviewsList[i]["publication"] + ', ' + reviewsList[i]["date"] + ')' + '</li>';
-							}
-							else{
-								list += '<li>' + reviewsList[i]["quote"]
-								+ ' (' + reviewsList[i]["critic"] + ', ' + reviewsList[i]["publication"] + ', ' + reviewsList[i]["date"] + ')' + '</li>';
-							}
+						
+						// });
+					}			
+				}
+				list += "</ul>";
 
-							
-							// });
-						}			
-					}
-					list += "</ul>";
+				html = $("<span>" + total + " reviews found.</span><br/>");
+				html.append(list);
 
-					html = $("<span>" + total + " reviews found.</span><br/>");
-					html.append(list);
+				reviewsHTML = html;
 
-					reviewsHTML = html;
-
-					$("#ajaxLoader").hide();
-			    }
-			    else{
-			        alert("Error reading API key value");
-			    }
-			})
-			.fail(function(x){
-			    alert("fail");
-			});
+				$("#ajaxLoader").hide();
+		    }
+		    else{
+		        alert("Error reading API key value");
+		    }
+		})
+		.fail(function(x){
+		    alert("fail");
+		});
 	}
 
 
@@ -296,20 +296,39 @@ $(document).ready(function(){
 
 		switch(this.id){
 			case "info":
-				$("#content").html(infoHTML);
+				if(infoHTML){//only show section if it has content
+					$("#info").removeClass('hidden');
+					$("#content").html(infoHTML);
+				}
 				break;
 
 			case "cast":
-				$("#content").html(castHTML);
+				if(castHTML){
+					$("#cast").removeClass('hidden');
+					$("#content").html(castHTML);
+				}
 				break;
 
 			case "trailer":
-				$("#content").html(trailerHTML);
+				if(trailerHTML){
+					$("#trailer").removeClass('hidden');
+					$("#content").html(trailerHTML);
+				}
 				break;
 
 			case "reviews":
-				$("#content").html(reviewsHTML);
+				if(reviewsHTML){
+					$("#reviews").removeClass('hidden');
+					$("#content").html(reviewsHTML);
+				}
 				break;
+
+			case "soundtrack"://http://brett.freemusicarchive.org:8000/api
+				if(soundtrackHTML){
+					$("#soundtrack").removeClass('hidden');
+					$("#content").html(soundtrackHTML);
+				}
+				break;				
 
 			case "twitter":
 				$("#content").html(twitterHTML);
@@ -325,15 +344,18 @@ $(document).ready(function(){
 
 	$("#search").click(function(){
 
+		$("#content").html("");//clear content
+
 		var toSearch = $("#searchTerm").val();//read what's on the input field
 
 		if(toSearch.length >= 3){
-			if(toSearch != searchTerm){
+			//if(toSearch != searchTerm){
+
 				//update searchTerm:
 				searchTerm = toSearch;
 
 				//show the 'loading' animation
-				$("#ajaxLoader").removeClass('hidden');//$("#ajaxLoader").show();
+				$("#ajaxLoader").removeClass('hidden');
 
 				//http://imdb.wemakesites.net
 				//http://imdbapi.poromenos.org
@@ -341,15 +363,44 @@ $(document).ready(function(){
 
 				$("#results").html("");
 				searchMovie(encodeURIComponent(searchTerm));
-			}
+			//}
 		}
 		else{alert("at least 3chars");}
 
 	});
 
+
+	function loadResults(results){
+		var listElement;
+		//hide the 'loading' animation
+		$("#ajaxLoader").addClass("hidden");//comment, it's not showing at this point
+		$("#results").removeClass("hidden");
+
+		if(results.movies.length > 0){
+			//hide error block since results were found:
+			$("#errorBlock").addClass("hidden");
+
+			$.each(results.movies, function(index, movie) {
+
+				listElement = $('<input type="radio" id="' + movie.id + '" name="alipe"' +'>');
+
+				$("#results").append(listElement);
+				$("#results").append('<label for="' + movie.id + '">' + movie.title + "</label><br/>");
+			});
+		}
+		else{
+			$("#errorBlock").html("No results were found");
+			$("#errorBlock").removeClass("hidden");
+		}
+	}
+
+
+
 	function searchMovie(title){
 
 		var url;
+
+		$("#ajaxLoader").removeClass("hidden");
 
 		//do not read key if it's already been read
 		if(apiKey){
@@ -357,18 +408,8 @@ $(document).ready(function(){
 
 			fetchData(url, "jsonp")
 			.done(function(data){
-				//hide the 'loading' animation
-				$("#ajaxLoader").hide();
-				$("#results").removeClass("hidden");
-				
-				$.each(data.movies, function(index, movie) {
-
-						var listElement = $('<input type="radio" id="' + movie.id + '" name="alipe"' +'>');
-
-						$("#results").append(listElement);
-						$("#results").append('<label for="' + movie.id + '">' + movie.title + "</label><br/>");
-				});
-
+				loadResults(data);
+				$("#results").show();
 			})
 			.fail(function(x){
 			    alert("fail");
@@ -383,28 +424,14 @@ $(document).ready(function(){
 
 						url = "http://api.rottentomatoes.com/api/public/v1.0/movies.json?apiKey=" + apiKey + '&q=' + title;
 
-						$.ajax({
-							url : url,
-							async: false,
-							dataType: "jsonp",
-							success: function(data){
-
-								//hide the 'loading' animation
-								$("#ajaxLoader").hide();
-								
-								$.each(data.movies, function(index, movie) {
-
-										var listElement = $('<input type="radio" id="' + movie.id + '" name="alipe"' +'>');
-										//listElement.addClass("ali");
-
-										$("#results").append(listElement);
-										$("#results").append('<label for="' + movie.id + '">' + movie.title + "</label><br/>");
-								});
-							},
-							error: function(result){
-				            	alert("Error");
-				        	}			
-						});//end ajax call
+						fetchData(url, "jsonp")
+						.done(function(data){
+							loadResults(data);
+							//$("#results").show(); ??
+						})
+						.fail(function(x){
+						    alert("fail");
+						});
 					}
 			    }
 			    else{

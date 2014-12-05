@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Reservoir Dogs</title>
+  <title>Anchovies</title>
   <meta charset="utf-8">
 
   <link rel="stylesheet" href="css/bootstrap.min.css">
@@ -55,16 +55,20 @@
       <li id="cast" class="hidden"><a href="#">Cast</a></li>
       <li id="trailer" class="hidden"><a href="#">Trailer</a></li>
       <li id="reviews" class="hidden"><a href="#">Reviews</a></li>
+      <li id="soundtrack" class="hidden"><a href="#">Soundtrack</a></li>
       <li id="twitter" class="hidden"><a href="#">On Twitter</a></li>
+      
       <!-- <li id="buy" class="hidden"><a href="#">Buy</a></li>       -->
-      <li id="playing" class="hidden"><a style="color:red;" href="#">Now playing</a></li>
+      <li id="playing"><a style="color:red;" href="#">Now playing</a></li>
       </ul>
     </div><!-- /.navbar-collapse -->
   </div><!-- /.container-fluid -->
 </nav>
 
 
-<div id="errorBlock" class="hidden alert alert-danger">
+<div id="errorBlock" class="hidden alert alert-danger" 
+style="margin-left:200px;"
+>
 </div>
 
 
@@ -80,7 +84,9 @@
       <img src="img/ajax-loader.gif"></img>
   </div>  
 
-  <div id="results" style="margin-left:200px;">
+  <div id="results" 
+  style="margin-left:200px;"
+  >
 
 <!--     <input id="1234" type="radio" name="alipe">
     <label for="1234">Perez</label>
