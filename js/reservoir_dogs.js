@@ -47,42 +47,11 @@ $(document).ready(function(){
 		//retrieve all the information
 		if(apiKey){
 	
-			/**				
-			//read more information from OMDb API
-			$.ajax({
-				//url : moviesSearchUrl,
-				url : 'omdb.json', 
-				dataType : "json",
-				async: false,				
-				success : function(data){
-					omdb = data;
-				},
-				error: function(){
-					alert("error");
-				}
-			});
-			*/
-
-
 			//buildSections();
-
 
 			/**The 'Info' section is going to combine information from both OMDB and Rotten Tomatoes API, so we first read from one and send the data to the other
 			*/
-
-			// moviesSearchUrl = "http://www.omdbapi.com/?s=" + encodeURI(searchTerm);
-			// fetchData(moviesSearchUrl, "jsonp")
-			// .done(function(data){
-				buildInfo();
-			// })
-			// .fail(function(x){
-			//     alert("fail");
-			// });			
-			
-
-
-
-
+			buildInfo();
 		}
 		else{
 			alert("Error reading API key value");
@@ -91,7 +60,6 @@ $(document).ready(function(){
 
 
 	function buildInfo(){
-		var genres, directors, release, format, hours, minutes, html, runtime;
 
 		// construct the url with our API key
 		moviesSearchUrl = baseUrl + movieId + '.json?apikey=' + apiKey;		
@@ -101,65 +69,16 @@ $(document).ready(function(){
 		.done(function(data){
 		    if(data){
 
-		    	info = data;
+				buildInfoHTML(data);
 
-				html = $("<ul/>");
+				var imdbID = data["alternate_ids"]["imdb"];
 
-				if(info.abridged_directors){
-					directors = "";
-					$.each(info.abridged_directors, function(index, dir){
-						directors += dir.name;
-						if(index < info.abridged_directors.length-1)
-							directors += ", ";
-					});
-					html.append("<li>Director(s): " + directors +".</li>");
+				if(imdbID){
+					addOMDBdata(imdbID);
 				}
-				//html.append("<li>Writer(s): " + omdb.Writer +".</li>");
-
-				html.append("<li>Year: " + info.year +"</li>");
-				html.append("<li>MPAA rating: " + info.mpaa_rating +"</li>");
 				
-				//convert time:
-				hours   = Math.floor(info.runtime/60);
-
-				runtime = "<li>Runtime: " + info.runtime + " minutes";
-				if(hours > 0){
-					minutes = info.runtime % 60;
-					
-					runtime += " - " + hours + " hour(s)";
-
-					if(minutes != 0){
-						runtime += " and " + minutes + " min";
-					}	
-				}
-				runtime += ".</li>";
-		    	
-				html.append(runtime);
-
-				genres = "";
-				$.each(info.genres, function(index, genre){
-					genres += genre;
-					if(index < info.genres.length-1)
-						genres += ", ";
-				});
-				html.append("<li>Genre(s): " + genres + ".</li>");
-
-				release = "<li>Releases:<ul>";
-				$.each(info.release_dates, function(key, val){
-					format = key[0].toUpperCase() + key.slice(1);
-					release += "<li>" + format + ": " + val + "</li>";
-				});
-				release += "</ul></li>";
-				html.append(release);
-
-				//html.append("<li>Awards: " + omdb.Awards +"</li>");
-				//html.append("<li>Synopsis: " + omdb.Plot +"</li>");
-				html.append("<li style='color:red;'>Ratings</li>");
-				html.append("<li style='color:red;'>http://www.miramax.com/movie/reservoir-dogs</li>");
-				//html.append('<li><img src="' + omdb.Poster +'"></li>');
-
-				infoHTML = html;
-
+				$("#info").removeClass('hidden');//only show section if it has content
+				
 				buildCast();
 		    }
 		    else{
@@ -171,6 +90,113 @@ $(document).ready(function(){
 		});		
 	}
 
+
+
+	function buildInfoHTML(info){
+
+		var genres, directors, release, format, hours, minutes, html, runtime, li;
+
+		html = $("<ul/>");
+
+		if(info.abridged_directors){
+			directors = "";
+			$.each(info.abridged_directors, function(index, dir){
+				directors += dir.name;
+				if(index < info.abridged_directors.length-1)
+					directors += ", ";
+			});
+			html.append("<li>Director(s): " + directors +".</li>");
+		}
+
+		//create empty <li> to add OMDB data later on
+		li = $("<li/>");
+		li.attr("id", "writer").addClass("hidden");
+		html.append(li);
+
+		html.append("<li>Year: " + info.year +"</li>");
+		html.append("<li>MPAA rating: " + info.mpaa_rating +"</li>");
+		
+		//convert time:
+		hours   = Math.floor(info.runtime/60);
+
+		runtime = "<li>Runtime: " + info.runtime + " minutes";
+		if(hours > 0){
+			minutes = info.runtime % 60;
+			
+			runtime += " - " + hours + " hour(s)";
+
+			if(minutes != 0){
+				runtime += " and " + minutes + " min";
+			}	
+		}
+		runtime += ".</li>";
+    	
+		html.append(runtime);
+
+		genres = "";
+		$.each(info.genres, function(index, genre){
+			genres += genre;
+			if(index < info.genres.length-1)
+				genres += ", ";
+		});
+		html.append("<li>Genre(s): " + genres + ".</li>");
+
+		release = "<li>Releases:<ul>";
+		$.each(info.release_dates, function(key, val){
+			format = key[0].toUpperCase() + key.slice(1);
+			release += "<li>" + format + ": " + val + "</li>";
+		});
+		release += "</ul></li>";
+		html.append(release);
+
+		li = $("<li/>");
+		li.attr("id", "awards").addClass("hidden");
+		html.append(li);
+
+		li = $("<li/>");
+		li.attr("id", "synopsis").addClass("hidden");
+		html.append(li);
+
+		html.append("<li style='color:red;'>Ratings</li>");
+		html.append("<li style='color:red;'>http://www.miramax.com/movie/reservoir-dogs</li>");
+		//html.append('<li><img src="' + omdb.Poster +'"></li>');
+
+		infoHTML = html;
+		$("#content").html(infoHTML);
+		$("#content").addClass("hidden");
+	}
+
+
+
+	function addOMDBdata(id){
+
+		moviesSearchUrl = "http://www.omdbapi.com/?i=tt" + id;
+
+		fetchData(moviesSearchUrl, "json")
+		.done(function(data){
+		    if(data){
+
+				//console.log(data);
+
+				$("#writer").html("Writer(s): " + data.Writer +".").removeClass("hidden");
+
+				$("#awards").html("Awards: " + data.Awards +".").removeClass("hidden");
+
+				$("#synopsis").html("Synopsis: " + data.Plot +".").removeClass("hidden");
+		    }
+		    else{
+		        alert("Error");
+		    }
+		})
+		.fail(function(x) {
+		    alert("fail");
+		});		
+	}
+
+
+
+
+
 	function buildCast(){
 
 		moviesSearchUrl = baseUrl + movieId + '/cast.json?apikey=' + apiKey;
@@ -179,16 +205,18 @@ $(document).ready(function(){
 		fetchData(moviesSearchUrl, "jsonp")
 		.done(function(data){
 		    if(data){
+		    	
 		    	cast = data["cast"];
 				var star;
-				var html = $("<ul/>");
+				castHTML = $("<ul/>");
 				for(var i=0; i<cast.length; i++){
 					star = cast[i];
 					if(star.characters.length){
-						html.append("<li>" + star.name + " as " + star.characters[0] + "</li>");
+						castHTML.append("<li>" + star.name + " as " + star.characters[0] + "</li>");
 					}
 				}
-				castHTML = html;
+
+				$("#cast").removeClass('hidden');//only show section if it has content
 
 				buildTrailer();		
 		    }
@@ -222,6 +250,8 @@ $(document).ready(function(){
 		//return html;
 		trailerHTML = html;
 
+		$("#trailer").removeClass('hidden');//only show section if it has content
+
 		buildReviews();
 	}
 
@@ -235,8 +265,6 @@ $(document).ready(function(){
 		fetchData(moviesSearchUrl, "jsonp")
 		.done(function(data){
 		    if(data){
-		    	$("#reviews").removeClass('hidden');
-
 		        reviews = data;
 				var total = 0;
 				var html;
@@ -270,6 +298,8 @@ $(document).ready(function(){
 
 				reviewsHTML = html;
 
+				$("#reviews").removeClass('hidden');//only show section if it has content
+
 				$("#ajaxLoader").hide();
 		    }
 		    else{
@@ -296,36 +326,30 @@ $(document).ready(function(){
 
 		switch(this.id){
 			case "info":
-				if(infoHTML){//only show section if it has content
-					$("#info").removeClass('hidden');
-					$("#content").html(infoHTML);
-				}
+				//info is a special case:
+				$("#content").removeClass("hidden");
 				break;
 
 			case "cast":
 				if(castHTML){
-					$("#cast").removeClass('hidden');
 					$("#content").html(castHTML);
 				}
 				break;
 
 			case "trailer":
 				if(trailerHTML){
-					$("#trailer").removeClass('hidden');
 					$("#content").html(trailerHTML);
 				}
 				break;
 
 			case "reviews":
 				if(reviewsHTML){
-					$("#reviews").removeClass('hidden');
 					$("#content").html(reviewsHTML);
 				}
 				break;
 
 			case "soundtrack"://http://brett.freemusicarchive.org:8000/api
 				if(soundtrackHTML){
-					$("#soundtrack").removeClass('hidden');
 					$("#content").html(soundtrackHTML);
 				}
 				break;				
