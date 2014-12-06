@@ -12,7 +12,25 @@ function buildTrailer(){
 }
 
 
-function sayHello(data){
-	alert(data);
-	//alert("Hiya!");
-}
+	function buildTrailer(){
+
+// http://apiblog.youtube.com/2009/05/youtube-apis-search-explained.html
+// http://gdata.youtube.com/feeds/api/videos?q=antwone%20fisher&v=2&max-results=10
+// http://www.codeproject.com/Articles/43403/YouTube-Dynamic-AJAX-JSON-Search-API-Demo
+// https://github.com/youtube/api-samples/tree/master/javascript
+// https://developers.google.com/youtube/v3/code_samples/javascript#search_by_keyword
+
+
+		var html = $("<div/>");
+
+		html.append('<iframe width="560" height="315" src="http://player.theplatform.com/p/DeuROC/dewwtrs_Q0n4/embed/select/tqJkKL2Q0aje?width=650&height=366#playerurl=http%3A//www.miramax.com/watch%3Fv%3Dlsd3RnZTpWq8IZtr575LVWVig2V0uXL6" frameborder="0" allowfullscreen></iframe>');
+
+		//return html;
+		trailerHTML = html;
+
+		$("#trailer").removeClass('hidden');//only show section if it has content
+
+		buildReviews();
+	}
+
+	
