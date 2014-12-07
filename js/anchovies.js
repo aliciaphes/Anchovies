@@ -240,9 +240,9 @@ $(document).ready(function(){
 // https://developers.google.com/youtube/v3/code_samples/javascript#search_by_keyword
 
 //I believe this uses v2 which is deprecated. TO DO: get a dev.key and update to v3
-		moviesSearchUrl = "http://gdata.youtube.com/feeds/videos?vq=" + encodeURIComponent(searchTerm+" trailer") + "&max-results=10&alt=json-in-script";
+		moviesSearchUrl = "http://gdata.youtube.com/feeds/videos?vq=" + encodeURIComponent(searchTerm+" trailer") + "&max-results=5&alt=json-in-script";
 
-		console.log(moviesSearchUrl);
+		//console.log(moviesSearchUrl);
 
 		fetchData('trailers.json', "json")
 		//fetchData(moviesSearchUrl, "jsonp")//ajax call to the Rotten tomatoes api
@@ -253,21 +253,29 @@ $(document).ready(function(){
 		    		var entries = trailers.entry;
 					
 					trailerHTML = "";
-					for(var i = 0; i < entries.length; i++){
+					for(var i=0; i < entries.length; i++){
 						var entry = entries[i];
-
-						//var title = entry.title.$t;
-						//var link = entry.link[0].href;
-						console.log(entry);
 						
-						var content = entry.content.$t;
+						//console.log(entry.id.$t);
+
+						var videoID = entry.id.$t.replace('http://gdata.youtube.com/feeds/videos/','');
+
+						//console.log(videoID);
+						
+						//var title = entry.title.$t;
+						var link = entry.link[0].href;
+						
+						var video = $("<div/>");
+
+						video.append('<iframe width="560" height="315" src="//www.youtube-nocookie.com/embed/' + videoID +'?rel=0" frameborder="0"></iframe>');
 						
 
 						//var html = $("<div/>");
-
 						// html.append('<iframe width="560" height="315" src="http://player.theplatform.com/p/DeuROC/dewwtrs_Q0n4/embed/select/tqJkKL2Q0aje?width=650&height=366#playerurl=http%3A//www.miramax.com/watch%3Fv%3Dlsd3RnZTpWq8IZtr575LVWVig2V0uXL6" frameborder="0" allowfullscreen></iframe>');
 
-						trailerHTML += content;
+						//trailerHTML += entry.content.$t;
+						trailerHTML += video.clone().wrap('<p>').parent().html();
+						//wrap with any html tag to retrieve the 'div' tag included
 					}
 
 					$("#trailer").removeClass('hidden');//only show section if it has content
