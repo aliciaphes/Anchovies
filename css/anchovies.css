@@ -1,0 +1,19 @@
+.hidden{
+	display: none;
+}
+
+html{
+    font-family: Montserrat,"Helvetica Neue",Helvetica,Arial,sans-serif;
+}
+
+
+#ajaxLoader{
+    position: fixed;
+    left: 50%;
+    top: 50%;
+}
+
+
+#searchTerm{
+    margin-left: 100px;
+}
