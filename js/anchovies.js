@@ -1,8 +1,6 @@
 $(document).ready(function(){
 
 	$("#results").on('change', function(){
-		
-		apiKey = "288q6w6yndu6msze233n2ztp";//borrar esto !!!!!!!!!!!!!!!!!!!!!!!!
 
 		if(apiKey){
 	

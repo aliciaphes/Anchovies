@@ -154,7 +154,7 @@ function buildCast(){
 			}
 			if(castHTML.html()){
 				castHTML.prepend("<br/>");
-				//$("#cast").removeClass('hidden');//only show section if it has content				
+				$("#cast").removeClass('hidden');//only show section if it has content				
 			}
 
 			buildTrailer();		

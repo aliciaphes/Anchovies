@@ -1,6 +1,6 @@
 
 //*******************************  DATA **********************************************
-var apiKey;
+var apiKey = "288q6w6yndu6msze233n2ztp";//borrar esto !!!!!!!!!!!!!!!!!!!!!!!!
 var searchTerm, moviesSearchUrl;
 var movieId, info, cast, omdb;
 var infoHTML, castHTML, trailerHTML, reviewsHTML, soundtrackHTML;
