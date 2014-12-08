@@ -14,6 +14,10 @@ html{
 }
 
 
-#searchTerm{
+#searchTerm, #content{
     margin-left: 100px;
+}
+
+.tracks{
+	cursor: pointer;
 }
