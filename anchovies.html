@@ -4,15 +4,19 @@
   <title>Anchovies</title>
   <meta charset="utf-8">
 
+  <!-- <link rel="stylesheet" href="jquery-ui.css"> -->
+  <!-- <link rel="stylesheet" href="jquery-ui.theme.min.css"> -->
+  <!-- <link rel="stylesheet" href="jquery-ui.structure.min.css"> -->
   <link rel="stylesheet" href="css/bootstrap.min.css">
   <link rel="stylesheet" href="css/bootswatch.min.css">
   <link rel="stylesheet" href="css/anchovies.css">
-
-  <script type="text/javascript" src="js/jquery-1.11.1.min.js"></script>
-  <script type="text/javascript" src="js/bootstrap.min.js"></script>
+  
+  <script type="text/javascript" src="js/frameworks/jquery-1.11.1.min.js"></script>
+  <!-- <script type="text/javascript" src="jquery-ui.min.js"></script> -->
+  <script type="text/javascript" src="js/frameworks/bootstrap.min.js"></script>
+  <!-- <script type="text/javascript" src="js/frameworks/jquery.mobile-1.4.5.min.js"></script> -->
   <!-- <script src="http://www.google.com/jsapi"></script> -->
 
-  <!-- <script type="text/javascript" src="js/xml2json.js"></script> -->
   <script type="text/javascript" src="js/global.js"></script>
   <script type="text/javascript" src="js/sections.js"></script>
   <script type="text/javascript" src="js/anchovies.js"></script>
@@ -20,110 +24,64 @@
 
 <body class="index">
 
-  <nav class="navbar navbar-default" role="navigation"><!-- navbar-fixed-top -->
-    <div class="container">
-
-     <!-- Brand and toggle get grouped for better mobile display -->
-     <div class="navbar-header page-scroll">
-      <!-- "hamburger" button -->
-      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <!-- <a class="navbar-brand" href="#">Anchovies</a>  -->
-      <!-- <a class="navbar-brand" href="#page-top">Start Bootstrap</a> -->
-    </div>
-
-    
-
-
-    <!-- Collect the nav links, forms, and other content for toggling -->
-    <div class="collapse navbar-collapse">
-      <ul class="nav navbar-nav" id="sections">
-
-        <li id="info" class="hidden"><a href="#">Info</a></li>
-        <li id="cast" class="hidden"><a href="#">Cast</a></li>
-        <li id="trailer" class="hidden"><a href="#">Trailers</a></li>
-        <li id="soundtrack" class="hidden"><a href="#">Soundtrack</a></li>
-        <li id="twitter" class="hidden"><a href="#">On Twitter</a></li>
-        
-        <!-- <li id="buy" class="hidden"><a href="#">Buy</a></li>       -->
-        <li id="reviews" class="hidden"><a href="#">Reviews</a></li>
-        <li id="playing"><a style="color:red;" href="#">Now playing</a></li>
-      </ul>
-    </div><!-- /.navbar-collapse -->
-  </div><!-- /.container-fluid -->
-</nav>
-
-
-
-<!-- Header -->
-<header>
-  <div class="container">
-    <div class="row">
-      <div class="col-lg-12">
-<!--           <div class="intro-text">
-            <span class="name">Start Bootstrap</span>
-            <hr class="star-light">
-            <span class="skills">Web Developer - Graphic Artist - User Experience Designer</span>
-          </div> -->
+  <nav class="navbar navbar-default" role="navigation">
+    <div class="container-fluid">
+      <!-- Brand and toggle get grouped for better mobile display -->
+      <div class="navbar-header">
+        <!-- "hamburger" button -->
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="#">Anchovies</a>
       </div>
+      <!-- Collect the nav links, forms, and other content for toggling -->
+      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        <ul class="nav navbar-nav" id="menuItems">
+          <li class="hidden active"><a id="title" href="#"></a></li>
+          <li class="divider"></li>
+          <li id="info" class="hidden"><a href="#">Info</a></li>
+          <li id="cast" class="hidden"><a href="#">Cast</a></li>
+          <li id="trailer" class="hidden"><a href="#">Trailers</a></li>
+          <li id="soundtrack" class="hidden"><a href="#">Soundtrack</a></li>
+          <li id="reviews" class="hidden"><a href="#">Reviews</a></li>
+          <!-- <li id="playing"><a style="color:red;" href="#">Now playing</a></li> -->
+        </ul>
+      </div><!-- /.navbar-collapse -->
+    </div><!-- /.container-fluid -->
+  </nav>
+
+
+  <!-- this div will contain error messages -->
+  <div id="errorBlock" class="hidden alert alert-danger">
+  </div>
+
+  <!-- this div has the search field and button -->
+  <div id="searchBlock" class="form-inline" role="form">
+    <div class="form-group">
+      <input type="search" id="searchTerm" size="60" class="input-block-level form-control">
     </div>
-  </header>
-
-          <div id="errorBlock" class="hidden alert alert-danger" 
-          style="margin-left:200px;"
-          >
-        </div>
+    <div class="form-group">
+      <button class="input-block-level btn btn-default" id="search">Find movie!</button>
+    </div>          
+  </div>
 
 
-        <div id="searchBlock" class="form-inline" role="form">
-          <div class="form-group">
-            <input type="search" id="searchTerm" size="60" class="form-control">
-          </div>
-          <div class="form-group">
-            <button class="btn btn-default" id="search">Find movie!</button>
-          </div>          
-        </div>
+  <!-- this is the 'loading data' gif -->
+  <div id="ajaxLoader" class="hidden">
+    <img src="img/ajax-loader.gif"></img>
+  </div>               
 
+  <!-- this div will contain the movies that were found so the user can select -->
+  <div id="results">
+  </div>
+  <!-- </div> -->
 
-  <section class="success">
-    <div class="container">
-<!--      <div class="row">
-         <div class="col-lg-12 text-center">
-          <h2>About</h2>
-          <hr class="star-light">
-        </div> 
-      </div> -->
-      <div class="row">  
-        <div class="col-lg-4 col-lg-offset-2">
-        
-        </div>
-    </div>
-  </section>
-
-
-        <div id="ajaxLoader" class="hidden">
-          <img src="img/ajax-loader.gif"></img>
-        </div>               
-
-        <div id="results" 
-        style="margin-left:200px;"
-        >
-
-          <input type="radio" id="10036" name="alipe">
-          <label for="10036">Forrest Gump</label>
-          <br/>
-          <input type="radio" id="10509" name="alipe">
-          <label for="10509">Finding Forrester</label>
-        </div>
-</div>
-
-
-<div id="content">
-</div>
+  <!-- this div is the core of the application since it will contain the visible results -->
+  <div id="content">
+  </div>
 
 </body>
 </html>

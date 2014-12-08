@@ -1,24 +1,19 @@
 $(document).ready(function(){
 
-	//http://stackoverflow.com/questions/14220321/how-to-return-the-response-from-an-ajax-call
-
-
-	//http://jsfiddle.net/RhnvU
-	//$("#results input").on('change', function(){
 	$("#results").on('change', function(){
-	//$("*[type='radio']").on('change', function(){
 		
-		//borrar esto !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-		apiKey = "288q6w6yndu6msze233n2ztp";
+		apiKey = "288q6w6yndu6msze233n2ztp";//borrar esto !!!!!!!!!!!!!!!!!!!!!!!!
 
 		if(apiKey){
 	
 			movieId = $("#results input:radio:checked").attr('id');
+			$("#title").parent().removeClass("hidden");
+			$("#title").html($("label[for='" + movieId + "']").html());
 
 			//retrieve API key
 			if(movieId){
 				$("#ajaxLoader").removeClass("hidden");
-				$("#results").hide();
+				$("#results").addClass("hidden");
 
 				/**The 'Info' section is going to combine information from both OMDB and Rotten Tomatoes API, so we first read from one and send the data to the other
 				*/
@@ -26,18 +21,14 @@ $(document).ready(function(){
 			}			
 		}
 		else{
-			alert("Error reading API key value");
+			$("#errorBlock").removeClass("hidden");
+			$("#errorBlock").html("Error reading API key value");
 		}
-
-
 	});
 
 
 
-
-	//$(staticAncestors).on(eventName, dynamicChild, function() {});
 	$("#content").on("click", ".disc", function(){
-		//e.preventDefault();
 
 		$(this).removeClass("disc");
 		$(this).addClass("tracks");
@@ -47,7 +38,7 @@ $(document).ready(function(){
 		var trackList = soundtracks[albumID];
 
 		if(trackList){//already exists
-			$(this).html(createListTracks(trackList[0]));//.addClass("tracks");
+			$(this).html(createListTracks(trackList[0]));
 		}
 		else{
 			//initialize:
@@ -78,11 +69,13 @@ $(document).ready(function(){
 
 			    }
 			    else{
-			        alert("Error");
+					$("#errorBlock").removeClass("hidden");
+					$("#errorBlock").html("Error reading from Spotify API");
 			    }
 			})
 			.fail(function(x) {
-			    alert("Error retrieving tracks of album");
+				$("#errorBlock").removeClass("hidden");
+				$("#errorBlock").html("Error retrieving tracks of album");			    
 			});
 		}
 	});
@@ -100,28 +93,14 @@ $(document).ready(function(){
 
 
 
-//jquery mobile?
-/*	.hover(
-	  function() {
-	    $( this ).append( $( "<span> ***</span>" ) );
-	  }, function() {
-	    $( this ).find( "span:last" ).remove();
-	  }
-	);*/
-
-
-
-
-	function buildTwitter(){
-
-	}
-
+	$(".disc").tooltip();//it doesn't work, it seems to be a conflict with bootstrap's tooltip's css
 
 
 	$("li").click(function(e){
 
 		$("#content").html("");//clear content
 		$("#content").removeClass();
+		$("#errorBlock").addClass("hidden");
 
 		switch(this.id){
 			case "info":
@@ -131,9 +110,8 @@ $(document).ready(function(){
 					$("#content").removeClass("hidden");
 				}
 				else{
-					$("#content").addClass("alert alert-danger");
-					$("#content").removeClass("hidden");
-					$("#content").html("No information was found");
+					$("#errorBlock").removeClass("hidden");
+					$("#errorBlock").html("No information was found");
 				}				
 				break;
 
@@ -142,9 +120,8 @@ $(document).ready(function(){
 					$("#content").html(castHTML);
 				}
 				else{
-					$("#content").addClass("alert alert-danger");
-					$("#content").removeClass("hidden");
-					$("#content").html("No cast was found");
+					$("#errorBlock").removeClass("hidden");
+					$("#errorBlock").html("No cast was found");					
 				}
 				break;
 
@@ -153,9 +130,8 @@ $(document).ready(function(){
 					$("#content").html(trailerHTML);
 				}
 				else{
-					$("#content").addClass("alert alert-danger");
-					$("#content").removeClass("hidden");
-					$("#content").html("No trailers were found");
+					$("#errorBlock").removeClass("hidden");
+					$("#errorBlock").html("No trailers was found");					
 				}				
 				break;
 
@@ -164,32 +140,20 @@ $(document).ready(function(){
 					$("#content").html(reviewsHTML);
 				}
 				else{
-					$("#content").addClass("alert alert-danger");
-					$("#content").removeClass("hidden");
-					$("#content").html("No reviews were found");
+					$("#errorBlock").removeClass("hidden");
+					$("#errorBlock").html("No reviews were found");					
 				}				
 				break;
 
 			case "soundtrack":
-			//http://brett.freemusicarchive.org:8000/api
-			//http://ws.spotify.com/search/1/album.json?q=gump
 				if(soundtrackHTML){
 					$("#content").html(soundtrackHTML);
 				}
 				else{
-					$("#content").addClass("alert alert-danger");
-					$("#content").removeClass("hidden");
-					$("#content").html("No soundtrack albums were found");
+					$("#errorBlock").removeClass("hidden");
+					$("#errorBlock").html("No soundtrack was found");					
 				}				
-				break;				
-
-			case "twitter":
-				$("#content").html(twitterHTML);
 				break;
-
-			// case "buy":
-			// 	$("#content").html(buyHTML);
-			// 	break;
 		}
 
 	});
@@ -201,29 +165,25 @@ $(document).ready(function(){
 		$("#content").removeClass();//and remove ALL classes
 
 		//hide the sections:
-		$("#sections").children().addClass("hidden");		
+		$("#menuItems").children().addClass("hidden");		
 
 		var toSearch = $("#searchTerm").val();//read what's on the input field
 
 		if(toSearch.length >= 3){
-			//if(toSearch != searchTerm){
 
-				//update searchTerm:
-				searchTerm = toSearch;
+			//update searchTerm:
+			searchTerm = toSearch;
 
-				//show the 'loading' animation
-				$("#ajaxLoader").removeClass('hidden');
+			//show the 'loading' animation
+			$("#ajaxLoader").removeClass('hidden');
 
-				//http://imdb.wemakesites.net
-				//http://imdbapi.poromenos.org
-				//https://code.google.com/p/moviepilot-api/w/list
-
-				$("#results").html("");
-				searchMovie(encodeURIComponent(searchTerm));
-			//}
+			$("#results").html("");
+			searchMovie(encodeURIComponent(searchTerm));
 		}
-		else{alert("at least 3chars");}
-
+		else{
+			$("#errorBlock").removeClass("hidden");
+			$("#errorBlock").html("You must enter at least 3 characters");
+		}
 	});
 
 
